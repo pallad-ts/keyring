@@ -1,0 +1,39 @@
+{
+  "name": "@pallad/keyring",
+  "version": "1.0.0",
+  "description": "Simple storage of keys or secrets",
+  "main": "compiled/index.js",
+  "types": "compiled/index.d.ts",
+  "scripts": {
+    "test": "pallad-scripts test",
+    "compile": "pallad-scripts compile",
+    "lint": "pallad-scripts lint",
+    "prepublishOnly": "npm run compile"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pallad-ts/keyring.git"
+  },
+  "files": [
+    "compiled",
+    "assets"
+  ],
+  "keywords": [
+    "key",
+    "keyring",
+    "secret"
+  ],
+  "author": "Łukasz Kużyński <lukasz.kuzynski@gmail.com> (https://wookieb.pl)",
+  "license": "MIT",
+  "devDependencies": {
+    "@pallad/scripts": "^3.1.2"
+  },
+  "dependencies": {
+    "@pallad/assert-helper": "^3.0.0",
+    "@pallad/secret": "^1.1.1",
+    "zod": "^3.22.4"
+  }
+}
