@@ -1,7 +1,7 @@
 import {Key, KeyInput, KeySchema} from "./Key";
 import {KeyId, KeyIdInput, KeyIdSchema} from "./KeyId";
 import {createAssertion} from "@pallad/assert-helper";
-import {KeyRingError} from "./KeyRingError";
+import {ERRORS} from "./errors";
 
 export class KeyRing {
 	#keys = new Map<KeyId, Key>();
@@ -9,16 +9,41 @@ export class KeyRing {
 	assertKeyById = createAssertion((id: KeyIdInput) => {
 		return this.getKeyById(id);
 	}, id => {
-		return new KeyRingError(`No such key: ${id}`);
+		return ERRORS.NO_SUCH_KEY.create(id);
 	})
 
-	addKey(keyId: KeyIdInput, key: KeyInput,) {
+	assertEntryById = createAssertion((id: KeyIdInput) => {
+		return this.getKeyEntryById(id);
+	}, id => {
+		return ERRORS.NO_SUCH_KEY.create(id)
+	})
+
+	/**
+	 * Add key to key ring
+	 *
+	 * Throws an error if key with the same id already exists to prevent accidental override
+	 */
+	addKey(keyId: KeyIdInput, key: KeyInput): this {
+		if (this.#keys.has(keyId)) {
+			throw ERRORS.KEY_ALREADY_EXISTS.create(keyId);
+		}
 		this.#keys.set(KeyIdSchema.parse(keyId), KeySchema.parse(key));
+		return this;
 	}
 
+	removeKey(keyId: KeyIdInput): this {
+		this.#keys.delete(KeyIdSchema.parse(keyId));
+		return this;
+	}
+
+	/**
+	 * Returns random key from key ring
+	 *
+	 * Throws an error if key ring is empty
+	 */
 	getRandomKey(): KeyRing.Entry {
 		if (this.#keys.size === 0) {
-			throw new KeyRingError('No keys in key ring');
+			throw ERRORS.NO_KEYS_IN_KEY_RING.create();
 		}
 
 		const entries = Array.from(this.#keys.entries());

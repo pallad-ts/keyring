@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@pallad/assert-helper": "^3.0.0",
+    "@pallad/errors": "^1.0.1",
     "@pallad/secret": "^1.1.1",
     "zod": "^3.22.4"
   }
