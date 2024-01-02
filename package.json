@@ -1,6 +1,6 @@
 {
   "name": "@pallad/keyring",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Simple storage of keys or secrets",
   "main": "compiled/index.js",
   "types": "compiled/index.d.ts",
