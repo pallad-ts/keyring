@@ -14,6 +14,10 @@ export class KeyRing {
 		this.#options = options;
 	}
 
+	get keySizeConstraint() {
+		return this.#options.keySize;
+	}
+
 	assertKeyById = createAssertion(
 		(id: KeyIdInput) => {
 			return this.getKeyById(id);
