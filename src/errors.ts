@@ -11,7 +11,11 @@ export const ERRORS = new Domain().addErrorsDescriptorsMap({
 		(keyId: string) => `Key already exists: ${keyId}`,
 		KeyRingError
 	),
-	NO_KEYS_IN_KEY_RING: ErrorDescriptor.useDefaultMessage(code(3), "No keys in key ring", KeyRingError),
+	NO_AVAILABLE_KEYS_IN_KEY_RING: ErrorDescriptor.useDefaultMessage(
+		code(3),
+		"No available keys in key ring",
+		KeyRingError
+	),
 	INVALID_KEY_SIZE: ErrorDescriptor.useMessageFormatter(
 		code(4),
 		(range: Range<number>, keySize: number) => {

@@ -8,6 +8,7 @@ export class KeyRing {
 	#keys = new Map<KeyId, Key>();
 
 	#options: KeyRing.Options;
+	#availableForRandomPick = new Set<string>();
 
 	constructor(options: KeyRing.Options = {}) {
 		this.#options = options;
@@ -32,6 +33,20 @@ export class KeyRing {
 	);
 
 	/**
+	 * Prevent key from being picked randomly
+	 *
+	 * It is useful to sometimes maintain the key in keyring
+	 * (for example for decrypting legacy data) but not using it for new use cases
+	 */
+	preventRandomPick(keyId: string): this {
+		if (!this.#availableForRandomPick.has(keyId)) {
+			throw ERRORS.NO_SUCH_KEY.create(keyId);
+		}
+		this.#availableForRandomPick.delete(keyId);
+		return this;
+	}
+
+	/**
 	 * Add key to key ring
 	 *
 	 * Throws an error if key with the same id already exists to prevent accidental override
@@ -43,11 +58,13 @@ export class KeyRing {
 		const validatedKey = KeySchema.parse(key);
 		validateKeySize(validatedKey, this.#options);
 		this.#keys.set(KeyIdSchema.parse(keyId), validatedKey);
+		this.#availableForRandomPick.add(keyId);
 		return this;
 	}
 
 	removeKey(keyId: KeyIdInput): this {
 		this.#keys.delete(KeyIdSchema.parse(keyId));
+		this.#availableForRandomPick.delete(keyId);
 		return this;
 	}
 
@@ -57,13 +74,13 @@ export class KeyRing {
 	 * Throws an error if key ring is empty
 	 */
 	getRandomKey(): KeyRing.Entry {
-		if (this.#keys.size === 0) {
-			throw ERRORS.NO_KEYS_IN_KEY_RING.create();
+		if (this.#availableForRandomPick.size === 0) {
+			throw ERRORS.NO_AVAILABLE_KEYS_IN_KEY_RING.create();
 		}
 
-		const entries = Array.from(this.#keys.entries());
-		const entry = entries[Math.floor(Math.random() * entries.length)];
-		return { id: entry[0], key: entry[1] };
+		const entries = Array.from(this.#availableForRandomPick);
+		const keyId = entries[Math.floor(Math.random() * entries.length)];
+		return this.getKeyEntryById(keyId)!;
 	}
 
 	getKeyById(keyIdInput: KeyIdInput): Key | undefined {
