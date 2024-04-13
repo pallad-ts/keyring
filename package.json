@@ -29,11 +29,15 @@
   "author": "Łukasz Kużyński <lukasz.kuzynski@gmail.com> (https://wookieb.pl)",
   "license": "MIT",
   "devDependencies": {
-    "@pallad/scripts": "^3.1.2"
+    "@pallad/errors-dev": "^1.1.0",
+    "@pallad/scripts": "^3.1.2",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "prettier": "^3.2.5"
   },
   "dependencies": {
     "@pallad/assert-helper": "^3.0.0",
     "@pallad/errors": "^1.0.1",
+    "@pallad/range": "^3.1.0",
     "@pallad/secret": "^1.1.1",
     "zod": "^3.22.4"
   }

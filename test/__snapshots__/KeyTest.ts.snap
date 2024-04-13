@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Key fails for non hex string 1`] = `
+"[
+  {
+    "code": "custom",
+    "message": "Invalid hex string",
+    "path": []
+  }
+]"
+`;
+
 exports[`Key fails for null or undefined 1`] = `
 "[
   {
@@ -19,29 +29,41 @@ exports[`Key fails for null or undefined 1`] = `
       {
         "issues": [
           {
-            "code": "custom",
-            "message": "Input not instance of Buffer",
-            "fatal": true,
-            "path": []
-          }
-        ],
-        "name": "ZodError"
-      },
-      {
-        "issues": [
-          {
-            "code": "invalid_type",
-            "expected": "string",
-            "received": "null",
+            "code": "invalid_union",
+            "unionErrors": [
+              {
+                "issues": [
+                  {
+                    "code": "custom",
+                    "message": "Input not instance of Buffer",
+                    "fatal": true,
+                    "path": []
+                  }
+                ],
+                "name": "ZodError"
+              },
+              {
+                "issues": [
+                  {
+                    "code": "invalid_type",
+                    "expected": "string",
+                    "received": "null",
+                    "path": [],
+                    "message": "Expected string, received null"
+                  }
+                ],
+                "name": "ZodError"
+              }
+            ],
             "path": [],
-            "message": "Expected string, received null"
+            "message": "Invalid input"
           }
         ],
         "name": "ZodError"
       }
     ],
     "path": [],
-    "message": "Key must be a string, a buffer or a secret"
+    "message": "Key must be a hex string, a buffer or a secret"
   }
 ]"
 `;
@@ -65,29 +87,41 @@ exports[`Key fails for null or undefined 2`] = `
       {
         "issues": [
           {
-            "code": "custom",
-            "message": "Input not instance of Buffer",
-            "fatal": true,
-            "path": []
-          }
-        ],
-        "name": "ZodError"
-      },
-      {
-        "issues": [
-          {
-            "code": "invalid_type",
-            "expected": "string",
-            "received": "undefined",
+            "code": "invalid_union",
+            "unionErrors": [
+              {
+                "issues": [
+                  {
+                    "code": "custom",
+                    "message": "Input not instance of Buffer",
+                    "fatal": true,
+                    "path": []
+                  }
+                ],
+                "name": "ZodError"
+              },
+              {
+                "issues": [
+                  {
+                    "code": "invalid_type",
+                    "expected": "string",
+                    "received": "undefined",
+                    "path": [],
+                    "message": "Required"
+                  }
+                ],
+                "name": "ZodError"
+              }
+            ],
             "path": [],
-            "message": "Required"
+            "message": "Invalid input"
           }
         ],
         "name": "ZodError"
       }
     ],
     "path": [],
-    "message": "Key must be a string, a buffer or a secret"
+    "message": "Key must be a hex string, a buffer or a secret"
   }
 ]"
 `;

@@ -1,22 +1,35 @@
-import {Key, KeyInput, KeySchema} from "./Key";
-import {KeyId, KeyIdInput, KeyIdSchema} from "./KeyId";
-import {createAssertion} from "@pallad/assert-helper";
-import {ERRORS} from "./errors";
+import { Key, KeyInput, KeySchema } from "./Key";
+import { KeyId, KeyIdInput, KeyIdSchema } from "./KeyId";
+import { createAssertion } from "@pallad/assert-helper";
+import { ERRORS } from "./errors";
+import { Range, enchant } from "@pallad/range";
 
 export class KeyRing {
 	#keys = new Map<KeyId, Key>();
 
-	assertKeyById = createAssertion((id: KeyIdInput) => {
-		return this.getKeyById(id);
-	}, id => {
-		return ERRORS.NO_SUCH_KEY.create(id);
-	})
+	#options: KeyRing.Options;
 
-	assertEntryById = createAssertion((id: KeyIdInput) => {
-		return this.getKeyEntryById(id);
-	}, id => {
-		return ERRORS.NO_SUCH_KEY.create(id)
-	})
+	constructor(options: KeyRing.Options = {}) {
+		this.#options = options;
+	}
+
+	assertKeyById = createAssertion(
+		(id: KeyIdInput) => {
+			return this.getKeyById(id);
+		},
+		id => {
+			return ERRORS.NO_SUCH_KEY.create(id);
+		}
+	);
+
+	assertEntryById = createAssertion(
+		(id: KeyIdInput) => {
+			return this.getKeyEntryById(id);
+		},
+		id => {
+			return ERRORS.NO_SUCH_KEY.create(id);
+		}
+	);
 
 	/**
 	 * Add key to key ring
@@ -27,7 +40,9 @@ export class KeyRing {
 		if (this.#keys.has(keyId)) {
 			throw ERRORS.KEY_ALREADY_EXISTS.create(keyId);
 		}
-		this.#keys.set(KeyIdSchema.parse(keyId), KeySchema.parse(key));
+		const validatedKey = KeySchema.parse(key);
+		validateKeySize(validatedKey, this.#options);
+		this.#keys.set(KeyIdSchema.parse(keyId), validatedKey);
 		return this;
 	}
 
@@ -48,7 +63,7 @@ export class KeyRing {
 
 		const entries = Array.from(this.#keys.entries());
 		const entry = entries[Math.floor(Math.random() * entries.length)];
-		return {id: entry[0], key: entry[1]};
+		return { id: entry[0], key: entry[1] };
 	}
 
 	getKeyById(keyIdInput: KeyIdInput): Key | undefined {
@@ -59,7 +74,7 @@ export class KeyRing {
 		const keyId = KeyIdSchema.parse(keyIdInput);
 		const key = this.#keys.get(keyId);
 		if (key) {
-			return {id: keyId, key};
+			return { id: keyId, key };
 		}
 	}
 }
@@ -67,6 +82,19 @@ export class KeyRing {
 export namespace KeyRing {
 	export interface Entry {
 		id: KeyId;
-		key: Key
+		key: Key;
+	}
+
+	export interface Options {
+		keySize?: Range<number>;
+	}
+}
+
+function validateKeySize(key: Key, options: KeyRing.Options) {
+	if (options.keySize) {
+		const keySize = key.getValue().length;
+		if (!Range.isWithin(options.keySize, keySize, true)) {
+			throw ERRORS.INVALID_KEY_SIZE.create(options.keySize, keySize);
+		}
 	}
 }
