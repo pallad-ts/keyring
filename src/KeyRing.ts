@@ -43,10 +43,11 @@ export class KeyRing {
 	 * (for example for decrypting legacy data) but not using it for new use cases
 	 */
 	preventRandomPick(keyId: string): this {
-		if (!this.#availableForRandomPick.has(keyId)) {
-			throw ERRORS.NO_SUCH_KEY.create(keyId);
+		const finalKeyId = KeyIdSchema.parse(keyId);
+		if (!this.#availableForRandomPick.has(finalKeyId)) {
+			throw ERRORS.NO_SUCH_KEY.create(finalKeyId);
 		}
-		this.#availableForRandomPick.delete(keyId);
+		this.#availableForRandomPick.delete(finalKeyId);
 		return this;
 	}
 
@@ -61,14 +62,16 @@ export class KeyRing {
 		}
 		const validatedKey = KeySchema.parse(key);
 		validateKeySize(validatedKey, this.#options);
-		this.#keys.set(KeyIdSchema.parse(keyId), validatedKey);
-		this.#availableForRandomPick.add(keyId);
+		const finalKeyId = KeyIdSchema.parse(keyId);
+		this.#keys.set(finalKeyId, validatedKey);
+		this.#availableForRandomPick.add(finalKeyId);
 		return this;
 	}
 
 	removeKey(keyId: KeyIdInput): this {
-		this.#keys.delete(KeyIdSchema.parse(keyId));
-		this.#availableForRandomPick.delete(keyId);
+		const finalKeyId = KeyIdSchema.parse(keyId);
+		this.#keys.delete(finalKeyId);
+		this.#availableForRandomPick.delete(finalKeyId);
 		return this;
 	}
 
