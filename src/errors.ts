@@ -29,4 +29,9 @@ export const ERRORS = new Domain().addErrorsDescriptorsMap({
 		},
 		KeyRingError
 	),
+	CUSTOM_VALIDATION_VIOLATED: ErrorDescriptor.useMessageFormatter(
+		code(5),
+		(message: string) => `Key custom validation violated: ${message}`,
+		KeyRingError
+	),
 });
